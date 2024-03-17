@@ -1,3 +1,0 @@
-gunicorn
-django
-Pillow==8.4.0
