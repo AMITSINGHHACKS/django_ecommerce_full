@@ -2,37 +2,34 @@ pipeline {
     agent any
     environment {
         APP_NAME = "pythonecom"
-        RELEASE = "1.0.0"
-        DOCKER_USER = "truthaniket"
-        DOCKER_PASS = 'dockerhub'
-        IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
-        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
     stages {
-        stage("Build & Push Docker Image") {
+        stage('GIT CHECKOUT') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Update manifest') {
             steps {
                 script {
-                    docker.withRegistry('',DOCKER_PASS) {
-                        docker_image = docker.build "${IMAGE_NAME}"
-                    }
-
-                    docker.withRegistry('',DOCKER_PASS) {
-                        docker_image.push("${IMAGE_TAG}")
-                        docker_image.push('latest')
+                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                            //def encodedPassword = URLEncoder.encode("$GIT_PASSWORD",'UTF-8')
+                            sh "git config --global user.email amitkumar.singh@vsit.edu.in"
+                            sh "git config --global user.name AMITSINGHHACKS"
+                            //sh "git switch master"
+                            sh "cat deployment.yml"
+                            sh "sed -i 's+${APP_NAME}.*+${APP_NAME}:${IMAGE_TAG}+g' deployment.yml"
+                            sh "cat deployment.yml"
+                            sh "git add ."
+                            sh "git commit -m 'Done by Jenkins Job changemanifest: ${env.BUILD_NUMBER}'"
+                            withCredentials([gitUsernamePassword(credentialsId: 'github', gitToolName: 'Default')]) {
+                                sh "git push https://github.com/AMITSINGHHACKS/django_ecommerce_full HEAD:k8manifests"
+                            }
+                        }
                     }
                 }
             }
-
         }
-        stage ('Cleanup Artifacts') {
-            steps {
-                script {
-                    sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
-                    sh "docker rmi ${IMAGE_NAME}:latest"
-                }
-            }
-        }
-        
     }
-   
 }
