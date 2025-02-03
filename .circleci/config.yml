@@ -1,44 +1,28 @@
-# This config was automatically generated from your source code
-# Stacks detected: cicd:jenkins:.,deps:python:.,file:manage.py:.
 version: 2.1
-orbs:
-  python: circleci/python@2
+
 jobs:
-  test-python:
-    # Install dependencies and run tests
+  build-and-push:
     docker:
-      - image: cimg/python:3.8-node
+      - image: cimg/base:stable  # Base CircleCI image
     steps:
-      - checkout
-      - python/install-packages
+      - checkout  # Pull latest code from repo
+      
+      - setup_remote_docker  # Enable Docker-in-Docker
+
       - run:
-          name: Run tests
-          command: python manage.py test
-  buildandpush:
-    # This is an example deploy job, not actually used by the workflow
-    docker:
-      - image: cimg/base:stable
-    steps:
-      # Replace this with steps to deploy to users
+          name: Log in to Docker Hub
+          command: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+
       - run:
-          name: buildandpush
-          command: docker build -t djangoapp .
-  push:
-    # This is an example deploy job, not actually used by the workflow
-    docker:
-      - image: cimg/base:stable
-    steps:
-      # Replace this with steps to deploy to users
+          name: Build Docker image
+          command: docker build -t $DOCKERHUB_USERNAME/my-app:latest .
+
       - run:
-          name: push
-          command: docker push amitsingh01/djangoapp:latestci
+          name: Push Docker image to Docker Hub
+          command: docker push $DOCKERHUB_USERNAME/my-app:latest
 
 workflows:
-  build-and-test:
+  version: 2
+  build-and-deploy:
     jobs:
-      - test-python
-      - buildandpush
-      - push
-    # - deploy:
-    #     requires:
-    #       - test-python
+      - build-and-push
