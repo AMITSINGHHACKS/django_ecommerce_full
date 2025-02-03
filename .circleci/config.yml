@@ -28,8 +28,6 @@ workflows:
     jobs:
       - test-python
       - buildandpush
-          requires:
-            - test-python
     # - deploy:
     #     requires:
     #       - test-python
