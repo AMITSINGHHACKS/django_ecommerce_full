@@ -22,7 +22,7 @@ jobs:
       # Replace this with steps to deploy to users
       - run:
           name: buildandpush
-          command: docker build -t Djangoapp .
+          command: docker build -t djangoapp .
   push:
     # This is an example deploy job, not actually used by the workflow
     docker:
@@ -31,7 +31,7 @@ jobs:
       # Replace this with steps to deploy to users
       - run:
           name: push
-          command: docker push amitsingh01/Djangoapp:latestci
+          command: docker push amitsingh01/djangoapp:latestci
 
 workflows:
   build-and-test:
