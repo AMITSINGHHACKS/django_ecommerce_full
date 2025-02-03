@@ -8,8 +8,8 @@ jobs:
       - checkout  # Pull latest code from repo
       
       - setup_remote_docker  # Enable Docker-in-Docker
-      - persist_to_workspace
-          root: .
+      - persist_to_workspace:
+          root: /tmp
           paths:
             - .
       - run:
@@ -21,8 +21,8 @@ jobs:
       - image: cimg/base:stable  # Base CircleCI image
     steps:  
       - setup_remote_docker
-      - attach_workspace
-          at: .
+      - attach_workspace:
+          at: /tmp
       - run:
           name: Log in to Docker Hub
           command: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
