@@ -22,12 +22,23 @@ jobs:
       # Replace this with steps to deploy to users
       - run:
           name: buildandpush
-          command: chmod +x ./buildandpush.sh
+          command: docker build -t Djangoapp .
+  push:
+    # This is an example deploy job, not actually used by the workflow
+    docker:
+      - image: cimg/base:stable
+    steps:
+      # Replace this with steps to deploy to users
+      - run:
+          name: push
+          command: docker push amitsingh01/Djangoapp:latestci
+
 workflows:
   build-and-test:
     jobs:
       - test-python
       - buildandpush
+      - push
     # - deploy:
     #     requires:
     #       - test-python
