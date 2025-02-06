@@ -36,4 +36,4 @@ workflows:
   build-and-deploy:
     jobs:
       - sonarqube
-      - build:
+      - build
