@@ -23,13 +23,17 @@ jobs:
       - setup_remote_docker  # Enable Docker-in-Docker
       - run:
           name: Build Docker image
-          command: docker build -t $DOCKERHUB_USERNAME/djangoecom .
+          command: |
+            docker build -t $DOCKERHUB_USERNAME/djangoecom:latestcircleci .
+            docker tag $DOCKERHUB_USERNAME/djangoecom:latestcircleci $DOCKERHUB_USERNAME/djangoecom:$CIRCLE_BUILD_NUM
       - run:
           name: Log in to Docker Hub
           command: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
       - run:
           name: Push Docker image to Docker Hub
-          command: docker push $DOCKERHUB_USERNAME/djangoecom:$CIRCLE_BUILD_NUM
+          command: |
+            docker push $DOCKERHUB_USERNAME/djangoecom:$CIRCLE_BUILD_NUM
+            docker push $DOCKERHUB_USERNAME/djangoecom:latestcircleci          
        
 workflows:
   version: 2
