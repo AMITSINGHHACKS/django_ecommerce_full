@@ -21,6 +21,6 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          IMAGE_TAG="${{ secrets.DOCKER_USERNAME }}"/djangoecom:$(date +%s)
+          IMAGE_TAG="${{ secrets.DOCKER_USERNAME }}"/djangoecomfromGA:$(date +%s)
           docker build . --file Dockerfile --tag $IMAGE_TAG
           docker push $IMAGE_TAG
