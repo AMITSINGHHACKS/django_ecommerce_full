@@ -1,0 +1,16 @@
+version: 2.1
+
+jobs:
+  sonarqube:
+    docker:
+      - image: sonarsource/sonar-scanner-cli  # SonarQube Scanner image
+    steps:
+      - checkout  # Pull latest code from repo
+      - run:
+          name: Run SonarQube Analysis
+          command: |
+            sonar-scanner \
+              -Dsonar.projectKey=djangoecom \
+              -Dsonar.sources=. \
+              -Dsonar.host.url=$SONARQUBE_HOST_URL \
+              -Dsonar.login=$SONARQUBE_TOKEN
