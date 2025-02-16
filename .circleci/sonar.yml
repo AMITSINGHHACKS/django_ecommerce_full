@@ -14,3 +14,8 @@ jobs:
               -Dsonar.sources=. \
               -Dsonar.host.url=$SONARQUBE_HOST_URL \
               -Dsonar.login=$SONARQUBE_TOKEN
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - sonarqube
